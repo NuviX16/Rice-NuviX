@@ -41,7 +41,6 @@
     for (const k in v) raiz.setProperty(k, v[k]);
     document.querySelector('meta[name="theme-color"]').content = c.crust;
     tira.querySelectorAll(".mini").forEach((b, j) => b.setAttribute("aria-selected", j === i));
-    if (centrar) tira.children[i].scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
 
     const f = $("escFondo"); f.src = `${A}clip/${t.k}.mp4`; f.poster = `${A}poster/${t.k}.webp`; f.play().catch(() => {});
     $("temaNom").textContent = t.n; $("ffTema").textContent = t.n; $("barraTema").title = t.n;
@@ -65,7 +64,6 @@
   let ini = temas.findIndex(t => t.n === "Lain Wired");
   try { const j = temas.findIndex(t => t.k === localStorage.getItem("nuvix-tema")); if (j >= 0) ini = j } catch (e) {}
   pintar(Math.max(ini, 0), false);
-  requestAnimationFrame(() => { const b = tira.children[Math.max(ini, 0)]; tira.parentElement.scrollLeft = b.offsetLeft - tira.parentElement.clientWidth / 2 + b.clientWidth / 2 });
 
   // destinos como texto grande
   $("destinos").innerHTML = ["barra", "bordes", "kitty", "starship", "fastfetch", "rofi", "bloqueo", "login", "VS Code", "Spotify",

@@ -8,130 +8,147 @@
 <meta property="og:title" content="NuviX Rice">
 <meta property="og:description" content="29 temas animados. El fondo decide los colores de todo.">
 <meta property="og:image" content="assets/reel.webp">
+<meta name="theme-color" content="#0a0910">
 <link rel="icon" href="assets/logo/lain_wired__lain-bn.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="estilo.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="estilo.css?v=2">
 </head>
 <body>
 
-<header class="hero">
-  <video class="hero-vid" src="assets/reel.mp4" poster="assets/reel.webp" autoplay muted loop playsinline></video>
-  <div class="hero-velo"></div>
-  <div class="wrap hero-cont">
-    <div class="kicker">Arch Linux · Hyprland · Serpantinum</div>
-    <h1>NuviX <span>rice</span></h1>
-    <p>29 fondos animados. Cada uno trae su paleta, y al cambiar de fondo cambian la barra, los bordes, la terminal, el lanzador, el login, Discord y hasta la pantalla de arranque.</p>
-    <div class="cifras">
-      <div><b>29</b>temas</div><div><b>45</b>retratos</div><div><b>15+</b>apps sincronizadas</div><div><b>1080p60</b>fondos en video</div>
-    </div>
-    <div class="botones"><a class="btn" href="#probador">Probar un tema</a><a class="btn sec" href="#galeria">Ver los 29</a><a class="btn sec" href="https://github.com/NuviX16">GitHub</a></div>
+<header class="portada">
+  <video class="portada-vid" src="assets/reel.mp4" poster="assets/reel.webp" autoplay muted loop playsinline></video>
+  <div class="portada-velo"></div>
+  <p class="vertical" lang="ja" aria-hidden="true">壁紙が色を決める</p>
+  <div class="marco portada-txt">
+    <p class="meta">Arch Linux — Hyprland — Serpantinum</p>
+    <h1>NuviX<br><span>Rice</span></h1>
+    <p class="bajada">29 fondos animados. Cada uno trae su paleta; al cambiar de fondo cambian la barra, los bordes, la terminal, el lanzador, el login y hasta el bot de Discord.</p>
+    <nav class="saltos" aria-label="Secciones">
+      <a href="#escritorio">Probar un tema</a><a href="#temas">Los 29 temas</a><a href="#retratos">Retratos</a><a href="#ficha">Ficha técnica</a>
+    </nav>
   </div>
+  <dl class="cifras marco">
+    <div><dt>temas</dt><dd>29</dd></div><div><dt>retratos</dt><dd>45</dd></div><div><dt>apps sincronizadas</dt><dd>15+</dd></div><div><dt>fondos</dt><dd>1080p60</dd></div>
+  </dl>
 </header>
 
 <main>
-  <section class="wrap blq" id="como">
-    <h2>Cómo funciona</h2>
-    <p class="muted">Un script vigila el fondo actual. Cuando cambia, busca el tema con el mismo nombre y reparte sus colores a todo lo demás.</p>
-    <div class="flujo">
-      <div class="paso"><span>1</span><b>Fondo .mp4</b><small>Serpantinum lo reproduce; cambia solo cada 2 h (claros de día, oscuros de noche)</small></div>
-      <div class="flecha" aria-hidden="true">→</div>
-      <div class="paso"><span>2</span><b>Tema .json</b><small>22 colores estilo Catppuccin hechos a mano para cada fondo</small></div>
-      <div class="flecha" aria-hidden="true">→</div>
-      <div class="paso"><span>3</span><b>wallpaper-theme.sh</b><small>aplica la paleta y lanza los sincronizadores</small></div>
+  <section class="bloque" id="escritorio" aria-labelledby="h-esc">
+    <div class="marco cabeza">
+      <p class="num">01</p>
+      <h2 id="h-esc">El escritorio</h2>
+      <p class="lead">Elige un fondo abajo. La página entera toma su paleta, igual que mi escritorio.</p>
     </div>
-    <div class="destinos" id="destinos"></div>
-  </section>
 
-  <section class="probador" id="probador" aria-labelledby="hProb">
-    <div class="wrap"><h2 id="hProb">Probador de temas</h2><p class="muted">Elige un tema: la página entera se pinta con su paleta. Toca el logo de fastfetch o la imagen de rofi para ver más retratos.</p></div>
-    <nav class="temas" aria-label="Temas"><div class="wrap"><div class="chips" id="chips"></div></div></nav>
-    <div class="wrap grid">
-      <article class="panel c7">
-        <header><h3>Escritorio</h3><span class="nota" id="nomTema"></span></header>
-        <div class="fondo"><video id="fondo" muted loop playsinline autoplay></video>
-          <div class="barra"><span><b>1</b> 2 3 4</span><span>6:42 PM</span><span>80%</span></div>
+    <div class="marco">
+      <div class="vistas" role="tablist" aria-label="Vista">
+        <button role="tab" id="v-escritorio" aria-selected="true" data-v="escritorio">Escritorio</button>
+        <button role="tab" id="v-bloqueo" aria-selected="false" data-v="bloqueo">Bloqueo</button>
+        <button role="tab" id="v-discord" aria-selected="false" data-v="discord">Discord</button>
+      </div>
+
+      <div class="escena-caja"><div class="escena" id="escena" data-v="escritorio">
+        <video class="esc-fondo" id="escFondo" muted loop playsinline autoplay></video>
+        <div class="esc-bloqueo-velo"></div>
+
+        <div class="barra capa-esc">
+          <span class="ws"><b>1</b><i>2</i><i>3</i><i>4</i></span>
+          <span id="barraHora">6:42 PM</span>
+          <span class="der"><i id="barraTema"></i> 80%</span>
         </div>
-        <div class="paleta" id="paleta"></div>
-      </article>
-      <article class="panel c5">
-        <header><h3>Pantalla de bloqueo</h3><span class="nota">avatar = retrato del tema</span></header>
-        <div class="lock"><img id="lockBg" alt="">
-          <div class="cont"><img class="pf" id="lockAv" alt="Avatar"><div class="hora">18:42</div><div class="fecha">martes, 24 de noviembre</div><div class="pw"></div></div>
-        </div>
-      </article>
-      <article class="panel c7">
-        <header><h3>fastfetch en kitty</h3><span class="nota">el logo rota entre los 45 retratos</span></header>
-        <div class="term">
-          <img class="logo" id="ffLogo" alt="Logo de fastfetch" title="Siguiente">
-<pre><span class="fr">╭─────────── <span class="ti">✦ NuviX ✦</span> ───────────</span>
-  <span class="k">user</span>    nuvix@NuviXArch
-  <span class="k">os</span>      Arch Linux
-  <span class="k">wm</span>      Hyprland
-  <span class="k">tema</span>    <span id="ffTema"></span>
-<span class="fr">├─────────────── <span class="ti">hw</span> ──────────────</span>
-  <span class="k">cpu</span>     Intel Core i7-12650H
-  <span class="k">gpu</span>     RTX 4060 Laptop
-<span class="fr">├────────────── <span class="ti">frase</span> ─────────────</span>
+
+        <div class="ventana kitty capa-esc">
+          <img class="ff-logo" id="ffLogo" alt="Logo de fastfetch">
+<pre class="ff"><span class="fr">╭──────── <span class="ti">✦ NuviX ✦</span> ────────</span>
+  <span class="k">user</span>   nuvix@NuviXArch
+  <span class="k">os</span>     Arch Linux
+  <span class="k">wm</span>     Hyprland
+  <span class="k">tema</span>   <span id="ffTema"></span>
+<span class="fr">├──────────── <span class="ti">hw</span> ────────────</span>
+  <span class="k">cpu</span>    i7-12650H
+  <span class="k">gpu</span>    RTX 4060
+<span class="fr">├─────────── <span class="ti">frase</span> ──────────</span>
   <span class="it">tempus fugit</span>
-<span class="fr">╰────────────────────────────────</span>
+<span class="fr">╰─────────────────────────────</span>
   <span id="ffDots"></span></pre>
         </div>
-      </article>
-      <article class="panel c5">
-        <header><h3>rofi · juegos</h3><span class="nota">SUPER+G</span></header>
-        <div class="rofi"><img id="rofiImg" alt="Imagen lateral" title="Siguiente">
+
+        <div class="ventana rofi capa-esc">
+          <img id="rofiImg" alt="Imagen lateral de rofi">
           <ul><li class="busq">buscar juego…</li><li class="sel">Red Dead Redemption</li><li>Hotline Miami 2</li><li>Crow Country</li><li>Manhunt</li><li>Warframe</li></ul>
         </div>
-      </article>
-      <article class="panel c12">
-        <header><h3>Discord · NuviX Basement</h3><span class="nota">el bot cambia su avatar, el ícono y el color del rol con el tema</span></header>
-        <div class="dc">
-          <div class="msg"><img class="av" id="dcAv" alt="">
-            <div><div class="who">NuviX <small>BOT</small><time>hoy a las 18:42</time></div>
-              <div class="embed"><b id="dcTitulo"></b><span>Cambié de fondo. La paleta, el rol y el ícono ya siguen al tema.</span><img id="dcCard" alt="Tarjeta del tema"></div>
+
+        <div class="bloqueo capa-blo">
+          <img class="pf" id="lockAv" alt="Avatar">
+          <p class="hora">18:42</p>
+          <p class="fecha">martes, 24 de noviembre</p>
+          <span class="clave"></span>
+        </div>
+
+        <div class="vesktop capa-dc">
+          <aside class="dc-lat"><span>꒰☾꒱・anuncios</span><span class="on">꒰✦꒱・temas</span><span>꒰✿꒱・general</span><span>꒰⌨꒱・comandos</span></aside>
+          <div class="dc-chat">
+            <div class="msg"><img class="av" id="dcAv" alt="">
+              <div><p class="who">NuviX <small>BOT</small> <time>hoy a las 18:42</time></p>
+                <div class="embed"><b id="dcTitulo"></b><span>Cambié de fondo. La paleta, el rol y el ícono ya siguen al tema.</span><img id="dcCard" alt="Tarjeta animada del tema"></div>
+              </div>
             </div>
           </div>
-          <div class="dc-row">
-            <div class="srv"><img id="dcIcon" alt="">ícono del servidor</div>
-            <div class="rp"><img id="rpImg" alt=""><div><div class="t">Jugando a NuviX</div><b id="rpDet"></b><span>kitty</span><span>tempus fugit</span></div></div>
-          </div>
         </div>
-      </article>
+      </div></div>
+
+      <div class="ficha-tema">
+        <div><p class="meta" id="temaSerie"></p><p class="tema-nom" id="temaNom"></p></div>
+        <ol class="paleta" id="paleta" aria-label="Paleta"></ol>
+      </div>
+    </div>
+
+    <div class="tira-caja"><div class="tira" id="tira" role="listbox" aria-label="Elegir tema"></div></div>
+  </section>
+
+  <section class="bloque" id="sync" aria-labelledby="h-sync">
+    <div class="marco dos">
+      <div class="cabeza"><p class="num">02</p><h2 id="h-sync">Un fondo, todo el sistema</h2>
+        <p class="lead">Un script vigila el fondo. Cuando cambia, busca el tema con el mismo nombre y reparte sus 22 colores.</p></div>
+      <ol class="flujo">
+        <li><span>fondo.mp4</span>Serpantinum lo reproduce; cambia solo cada 2 h, claros de día y oscuros de noche.</li>
+        <li><span>tema.json</span>22 colores hechos a mano para ese fondo.</li>
+        <li><span>wallpaper-theme.sh</span>aplica la paleta y avisa a cada programa.</li>
+      </ol>
+    </div>
+    <div class="marco"><p class="destinos" id="destinos"></p></div>
+  </section>
+
+  <section class="bloque" id="temas" aria-labelledby="h-temas">
+    <div class="marco cabeza"><p class="num">03</p><h2 id="h-temas">Los 29 temas</h2>
+      <p class="lead">Pasa el cursor para verlos en movimiento. Las escenas de Wallpaper Engine se convirtieron a video grabando una pantalla virtual de Hyprland.</p></div>
+    <div class="marco" id="series"></div>
+  </section>
+
+  <section class="bloque" id="retratos" aria-labelledby="h-ret">
+    <div class="marco cabeza"><p class="num">04</p><h2 id="h-ret">Retratos</h2>
+      <p class="lead">45 imágenes que rotan en fastfetch, rofi y el bloqueo. Recortadas, también son los stickers y emojis del servidor.</p></div>
+    <div class="marco"><div class="mesa" id="mesa"></div></div>
+  </section>
+
+  <section class="bloque" id="ficha" aria-labelledby="h-ficha">
+    <div class="marco cabeza"><p class="num">05</p><h2 id="h-ficha">Ficha técnica</h2></div>
+    <div class="marco specs">
+      <dl><dt>Sistema</dt><dd>Arch Linux, kernel 7.3</dd><dt>Compositor</dt><dd>Hyprland, configuración en Lua</dd><dt>Shell</dt><dd>Serpantinum (Quickshell): barra, widgets y bloqueo</dd><dt>Arranque</dt><dd>systemd-boot + Plymouth con nieve</dd><dt>Login</dt><dd>SDDM astronaut, sigue al tema</dd></dl>
+      <dl><dt>Terminal</dt><dd>kitty, starship, fastfetch</dd><dt>Lanzador</dt><dd>rofi para juegos y apagado</dd><dt>Apps</dt><dd>VS Code, Obsidian, Spotify, Vesktop, Dolphin, Brave</dd><dt>Iconos</dt><dd>Papirus con carpetas del color del tema</dd><dt>Equipo</dt><dd>MSI Cyborg 15 · i7-12650H · RTX 4060 · 144 Hz</dd></dl>
+      <dl class="atajos"><dt>SUPER G</dt><dd>juegos</dd><dt>SUPER E</dt><dd>archivos</dd><dt>SUPER Esc</dt><dd>bloquear</dd><dt>SUPER ⇧ Esc</dt><dd>apagar</dd><dt>SUPER ⇧ D</dt><dd>demo de temas</dd><dt>SUPER ⇧ R</dt><dd>escena</dd><dt>SUPER O</dt><dd>ventiladores</dd><dt>SUPER F9</dt><dd>grabar</dd></dl>
     </div>
   </section>
-
-  <section class="wrap blq" id="galeria" aria-labelledby="hGal">
-    <h2 id="hGal">Los 29 temas</h2>
-    <p class="muted">Pasa el cursor (o toca) para verlo en movimiento. Las «escenas» eran fondos interactivos de Wallpaper Engine, convertidos a video en bucle con <code>linux-wallpaperengine</code> y una pantalla virtual de Hyprland.</p>
-    <div class="filtros" id="series"></div>
-    <div class="galeria" id="gal"></div>
-  </section>
-
-  <section class="wrap blq" id="stickers" aria-labelledby="hStk">
-    <h2 id="hStk">Stickers y emojis</h2>
-    <p class="muted">Los 45 retratos recortados automáticamente (rembg + isnet-anime) con borde blanco, listos para Discord: 320×320 para stickers y 128×128 para emojis.</p>
-    <div class="filtros" id="filtros"></div>
-    <div class="st-panel"><div class="st-grid" id="stk"></div></div>
-  </section>
-
-  <section class="wrap blq" id="partes" aria-labelledby="hPar">
-    <h2 id="hPar">Las piezas</h2>
-    <div class="partes">
-      <div class="parte"><h3>Base</h3><ul><li>Arch Linux · kernel 7.3</li><li>Hyprland con configuración en Lua</li><li>Serpantinum (Quickshell): barra, widgets, bloqueo</li><li>systemd-boot + Plymouth con nieve</li><li>SDDM astronaut, sigue al tema</li></ul></div>
-      <div class="parte"><h3>Apps que siguen el tema</h3><ul><li>kitty + starship + fastfetch</li><li>rofi (juegos y apagado)</li><li>VS Code, Obsidian, Spotify (Spicetify)</li><li>Vesktop con el fondo de fondo</li><li>GTK, Qt, Dolphin, Papirus, Brave</li></ul></div>
-      <div class="parte"><h3>Atajos</h3><dl class="atajos">
-        <dt>SUPER+G</dt><dd>juegos</dd><dt>SUPER+E</dt><dd>archivos</dd><dt>SUPER+Esc</dt><dd>bloquear</dd><dt>SUPER+⇧+Esc</dt><dd>apagar</dd>
-        <dt>SUPER+⇧+D</dt><dd>demo de temas</dd><dt>SUPER+⇧+R</dt><dd>escena</dd><dt>SUPER+O</dt><dd>ventiladores</dd><dt>SUPER+F9</dt><dd>grabar</dd></dl></div>
-      <div class="parte"><h3>Equipo</h3><ul><li>MSI Cyborg 15 A12VF</li><li>i7-12650H · RTX 4060</li><li>1920×1080 a 144 Hz</li><li>modo juego: pausa el fondo y sube ventiladores</li></ul></div>
-    </div>
-  </section>
-
-  <footer class="wrap pie">
-    <p>Hecho por <a href="https://github.com/NuviX16">NuviX16</a>. Los fondos y el arte son de sus autores (Steam Workshop, Pinterest, MoeWalls); este sitio solo muestra cómo los uso en mi escritorio. Los IDs de Workshop están en cada tema.</p>
-  </footer>
 </main>
 
-<script src="app.js"></script>
+<footer class="marco pie">
+  <p class="pie-nom">NuviX<span lang="ja">・ヌビックス</span></p>
+  <p>Hecho por <a href="https://github.com/NuviX16">NuviX16</a> · <a href="https://nuvix16.github.io/Bot-NuviX/">el bot</a> · <a href="https://nuvix16.github.io/Portafolio-NuviX/">portafolio</a></p>
+  <p class="creditos">Los fondos y el arte son de sus autores (Steam Workshop, Pinterest, MoeWalls); aquí solo muestro cómo los uso.</p>
+</footer>
+
+<script src="app.js?v=2"></script>
 </body>
 </html>

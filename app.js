@@ -1,91 +1,95 @@
 (async () => {
-  const data = await (await fetch("assets/datos.json")).json();
+  const datos = await (await fetch("assets/datos.json?v=2")).json();
   const $ = id => document.getElementById(id);
-  const temas = data.temas, root = document.documentElement.style, A = "assets/";
-  const allLogos = temas.flatMap(t => t.logos.map(l => `${A}logo/${t.k}__${l}.webp`));
-  const allLados = temas.flatMap(t => t.lados.map(l => `${A}lado/${t.k}__${l}.webp`));
-  let iL = 0, iR = 0;
+  const temas = datos.temas, raiz = document.documentElement.style, A = "assets/";
 
-  // destinos del flujo
-  $("destinos").innerHTML = ["barra y widgets", "bordes de Hyprland", "kitty", "starship", "fastfetch", "rofi", "bloqueo", "login (SDDM)",
-    "VS Code", "Spotify", "Obsidian", "Vesktop", "GTK / Qt", "carpetas Papirus", "Brave", "bot de Discord", "avatar"].map(d => `<span>${d}</span>`).join("");
+  // escala del escenario (diseñado a 1280x720)
+  const caja = document.querySelector(".escena-caja"), escena = $("escena");
+  const escalar = () => { escena.style.transform = `scale(${caja.clientWidth / 1280})` };
+  new ResizeObserver(escalar).observe(caja); escalar();
 
-  // probador
-  const chips = $("chips");
-  temas.forEach((t, i) => {
-    const b = document.createElement("button");
-    b.className = "chip"; b.type = "button"; b.id = "tema-" + t.k;
-    b.innerHTML = `<i style="background:${t.c.blue}"></i>${t.n}`;
-    b.onclick = () => pintar(i, true);
-    chips.append(b);
+  // vistas
+  document.querySelectorAll(".vistas button").forEach(b => b.onclick = () => {
+    escena.dataset.v = b.dataset.v;
+    document.querySelectorAll(".vistas button").forEach(x => x.setAttribute("aria-selected", x === b));
   });
 
-  function pintar(i, scroll) {
+  // reloj real en la barra y el bloqueo
+  const reloj = () => {
+    const d = new Date();
+    $("barraHora").textContent = d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" });
+    document.querySelector(".bloqueo .hora").textContent = d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", hour12: false });
+    document.querySelector(".bloqueo .fecha").textContent = d.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" });
+  };
+  reloj(); setInterval(reloj, 30000);
+
+  // tira de temas
+  const tira = $("tira");
+  temas.forEach((t, i) => {
+    const b = document.createElement("button");
+    b.className = "mini"; b.type = "button"; b.setAttribute("role", "option"); b.id = "t-" + t.k;
+    b.innerHTML = `<img loading="lazy" src="${A}poster/${t.k}.webp" alt=""><span>${t.n}</span>`;
+    b.onclick = () => pintar(i, true);
+    tira.append(b);
+  });
+
+  let rotar;
+  function pintar(i, centrar) {
     const t = temas[i], c = t.c;
-    const set = { "--base": c.base, "--mantle": c.mantle, "--crust": c.crust, "--text": c.text, "--sub": c.subtext0,
-      "--s0": c.surface0, "--s1": c.surface1, "--acc": c.blue, "--mauve": c.mauve, "--pink": c.pink };
-    for (const k in set) root.setProperty(k, set[k]);
-    chips.querySelectorAll(".chip").forEach((b, j) => b.setAttribute("aria-pressed", j === i));
-    if (scroll) chips.children[i].scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
-    const f = $("fondo"); f.src = `${A}clip/${t.k}.mp4`; f.poster = `${A}poster/${t.k}.webp`; f.play().catch(() => {});
-    $("lockBg").src = `${A}poster/${t.k}.webp`;
-    $("nomTema").textContent = t.n + (t.serie ? ` · ${t.serie}` : ""); $("ffTema").textContent = t.n;
+    const v = { "--fondo": c.crust, "--fondo-2": c.mantle, "--texto": c.text, "--tenue": c.subtext0, "--acento": c.blue,
+      "--acento-2": c.pink, "--malva": c.mauve, "--base": c.base, "--s1": c.surface1 };
+    for (const k in v) raiz.setProperty(k, v[k]);
+    document.querySelector('meta[name="theme-color"]').content = c.crust;
+    tira.querySelectorAll(".mini").forEach((b, j) => b.setAttribute("aria-selected", j === i));
+    if (centrar) tira.children[i].scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+
+    const f = $("escFondo"); f.src = `${A}clip/${t.k}.mp4`; f.poster = `${A}poster/${t.k}.webp`; f.play().catch(() => {});
+    $("temaNom").textContent = t.n; $("ffTema").textContent = t.n; $("barraTema").title = t.n;
+    $("temaSerie").textContent = [t.serie, t.escena ? "escena de Wallpaper Engine" : t.ws ? "video de Wallpaper Engine" : "video"].filter(Boolean).join(" · ");
     $("paleta").innerHTML = ["base", "surface1", "blue", "sapphire", "mauve", "pink", "peach", "yellow", "green", "teal", "red", "text"]
-      .map(k => `<i style="background:${c[k]}" data-hex="${c[k]}" title="${k} ${c[k]}"></i>`).join("");
+      .map(k => `<li><i style="background:${c[k]}"></i><span>${c[k]}</span></li>`).join("");
     $("ffDots").innerHTML = ["red", "green", "yellow", "blue", "mauve", "teal", "pink", "text"].map(k => `<span style="color:${c[k]}">●</span>`).join(" ");
-    const propio = t.logos.length ? `${A}logo/${t.k}__${t.logos[0]}.webp` : null;
-    const lado = t.lados.find(l => l !== "video") || "video";
-    iL = Math.max(0, allLogos.indexOf(propio)); $("ffLogo").src = propio || allLogos[0];
-    $("rofiImg").src = `${A}lado/${t.k}__${lado}.webp`; iR = Math.max(0, allLados.indexOf($("rofiImg").getAttribute("src")));
-    const av = propio || `${A}lado/${t.k}__video.webp`;
-    ["lockAv", "dcAv", "dcIcon", "rpImg"].forEach(id => $(id).src = av);
+
+    // retratos del tema (fastfetch rota entre ellos); si no tiene, cuadro del video
+    const logos = t.logos.length ? t.logos.map(l => `${A}logo/${t.k}__${l}.webp`) : [`${A}lado/${t.k}__video.webp`];
+    const lados = t.lados.map(l => `${A}lado/${t.k}__${l}.webp`);
+    let n = 0;
+    const poner = () => { $("ffLogo").src = logos[n % logos.length]; $("rofiImg").src = lados[n % lados.length]; n++ };
+    poner(); clearInterval(rotar); rotar = setInterval(poner, 4000);
+    ["lockAv", "dcAv"].forEach(id => $(id).src = logos[0]);
     $("dcTitulo").textContent = `✦ nuevo tema: ${t.n}`;
-    $("rpDet").textContent = `${t.n} · Arch + Hyprland`;
     $("dcCard").src = t.tarjeta ? `${A}tarjeta/${t.k}.webp` : `${A}poster/${t.k}.webp`;
     try { localStorage.setItem("nuvix-tema", t.k) } catch (e) {}
   }
-  $("ffLogo").onclick = () => { iL = (iL + 1) % allLogos.length; $("ffLogo").src = allLogos[iL] };
-  $("rofiImg").onclick = () => { iR = (iR + 1) % allLados.length; $("rofiImg").src = allLados[iR] };
 
   let ini = temas.findIndex(t => t.n === "Lain Wired");
   try { const j = temas.findIndex(t => t.k === localStorage.getItem("nuvix-tema")); if (j >= 0) ini = j } catch (e) {}
   pintar(Math.max(ini, 0), false);
+  requestAnimationFrame(() => { const b = tira.children[Math.max(ini, 0)]; tira.parentElement.scrollLeft = b.offsetLeft - tira.parentElement.clientWidth / 2 + b.clientWidth / 2 });
 
-  // galería
-  const gal = $("gal"), series = ["Todas", ...new Set(temas.map(t => t.serie).filter(Boolean))];
-  function verGal(s) {
-    gal.innerHTML = "";
-    temas.forEach((t, i) => {
-      if (s !== "Todas" && t.serie !== s) return;
-      const b = document.createElement("button");
-      b.className = "tarj"; b.type = "button";
-      const tipo = t.escena ? "escena WE" : t.ws ? "video WE" : "video";
-      b.innerHTML = `<div class="vid"><img loading="lazy" src="${A}poster/${t.k}.webp" alt=""><video muted loop playsinline preload="none" data-src="${A}clip/${t.k}.mp4"></video></div>
-        <div class="inf"><div class="nm"><b>${t.n}</b><span class="tag">${tipo}</span></div>
-        <small>${t.serie || "—"}${t.ws ? ` · <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=${t.ws}" onclick="event.stopPropagation()">Workshop</a>` : ""} · ${t.logos.length} retratos</small>
-        <div class="mini">${["base", "blue", "mauve", "pink", "peach", "green", "teal"].map(k => `<i style="background:${t.c[k]}"></i>`).join("")}</div></div>`;
-      const v = b.querySelector("video");
-      const on = () => { if (!v.src) v.src = v.dataset.src; v.play().then(() => b.classList.add("play")).catch(() => {}) };
-      const off = () => { v.pause(); b.classList.remove("play") };
-      b.addEventListener("mouseenter", on); b.addEventListener("mouseleave", off);
-      b.addEventListener("focus", on); b.addEventListener("blur", off);
-      b.onclick = () => { pintar(i, true); $("probador").scrollIntoView({ behavior: "smooth" }) };
-      gal.append(b);
-    });
-    $("series").querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x.dataset.s === s));
-  }
-  series.forEach(s => { const b = document.createElement("button"); b.className = "chip"; b.type = "button"; b.dataset.s = s;
-    b.textContent = s === "Todas" ? `Todas · ${temas.length}` : `${s} · ${temas.filter(t => t.serie === s).length}`; b.onclick = () => verGal(s); $("series").append(b) });
-  verGal("Todas");
+  // destinos como texto grande
+  $("destinos").innerHTML = ["barra", "bordes", "kitty", "starship", "fastfetch", "rofi", "bloqueo", "login", "VS Code", "Spotify",
+    "Obsidian", "Vesktop", "GTK", "Qt", "carpetas", "Brave", "bot de Discord"].map(d => `<b>${d}</b>`).join(" / ");
 
-  // stickers
-  const st = data.stickers, pjs = ["Todos", ...new Set(st.map(x => x.pj))];
-  function verSt(pj) {
-    $("stk").innerHTML = st.filter(x => pj === "Todos" || x.pj === pj).map(x =>
-      `<div class="st"><img loading="lazy" src="${A}sticker/${x.n}-${x.slug}.webp" alt="${x.slug}">:${x.slug.replace(/-/g, "_")}:</div>`).join("");
-    $("filtros").querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", b.dataset.pj === pj));
-  }
-  pjs.forEach(p => { const b = document.createElement("button"); b.className = "chip"; b.type = "button"; b.dataset.pj = p;
-    b.textContent = p === "Todos" ? `Todos · ${st.length}` : `${p} · ${st.filter(x => x.pj === p).length}`; b.onclick = () => verSt(p); $("filtros").append(b) });
-  verSt("Todos");
+  // temas por serie
+  const series = [...new Set(temas.map(t => t.serie || "Otros"))];
+  $("series").innerHTML = series.map(s => {
+    const ts = temas.filter(t => (t.serie || "Otros") === s);
+    return `<div class="serie"><h3>${s}<small>${ts.length} ${ts.length === 1 ? "tema" : "temas"}</small></h3><div class="serie-grid">${ts.map(t =>
+      `<button class="carta" type="button" data-i="${temas.indexOf(t)}"><img loading="lazy" src="${A}poster/${t.k}.webp" alt="">
+        <video muted loop playsinline preload="none" data-src="${A}clip/${t.k}.mp4"></video><i class="tira-color" style="background:${t.c.blue}"></i>
+        <span>${t.n}<small>${t.escena ? "escena" : "video"}</small></span></button>`).join("")}</div></div>`;
+  }).join("");
+  document.querySelectorAll(".carta").forEach(b => {
+    const v = b.querySelector("video");
+    const on = () => { if (!v.src) v.src = v.dataset.src; v.play().then(() => b.classList.add("play")).catch(() => {}) };
+    const off = () => { v.pause(); b.classList.remove("play") };
+    b.addEventListener("mouseenter", on); b.addEventListener("mouseleave", off);
+    b.addEventListener("focus", on); b.addEventListener("blur", off);
+    b.onclick = () => { pintar(+b.dataset.i, true); $("escritorio").scrollIntoView({ behavior: "smooth" }) };
+  });
+
+  // stickers sueltos, girados al azar (fijo por sticker)
+  $("mesa").innerHTML = datos.stickers.map((s, i) =>
+    `<img loading="lazy" src="${A}sticker/${s.n}-${s.slug}.webp" alt=":${s.slug.replace(/-/g, "_")}:" title=":${s.slug.replace(/-/g, "_")}:" style="--r:${((i * 37) % 17) - 8}deg">`).join("");
 })();
